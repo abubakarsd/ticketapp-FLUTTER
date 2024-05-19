@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 
 class TransfarTo extends StatefulWidget {
   final String section;
-  const TransfarTo({
-    Key? key,
-    required this.section,
-  }) : super(key: key);
+  final Function seatTransBottomSheet;
+  final List<int> selectedSeats;
+  final Function seatTransUserBottomSheet;
+
+  const TransfarTo(
+      {Key? key,
+      required this.section,
+      required this.seatTransBottomSheet,
+      required this.selectedSeats,
+      required this.seatTransUserBottomSheet})
+      : super(key: key);
 
   @override
   State<TransfarTo> createState() => _TransfarToState();
@@ -14,8 +21,8 @@ class TransfarTo extends StatefulWidget {
 class _TransfarToState extends State<TransfarTo> {
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
+
     return StatefulBuilder(builder: (context, setState) {
       return SizedBox(
         height: MediaQuery.of(context).size.height * 0.6,
@@ -28,7 +35,7 @@ class _TransfarToState extends State<TransfarTo> {
               child: Column(
                 children: [
                   Text(
-                    'SELECT SEATS TO TRANSFER',
+                    'TRANSFER TO',
                     style: TextStyle(
                       color: Color(0xFF908E8E),
                       fontSize: 13,
@@ -41,25 +48,107 @@ class _TransfarToState extends State<TransfarTo> {
                 ],
               ),
             ),
-            Text(widget.section),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 53,
+                width: 388,
+                decoration: BoxDecoration(
+                  // borderRadius: BorderRadius.all(Radius.circular(8)),
+                  // color: Colors.white,
+                  border: Border.all(
+                    color: const Color(0xff0163D5),
+                    width: 2.0,
+                  ),
+                ),
+                child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Select From Contacts'),
+                      Icon(Icons.contact_page_outlined)
+                    ]),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                widget.seatTransUserBottomSheet(context, widget.selectedSeats);
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: 53,
+                  width: 388,
+                  decoration: BoxDecoration(
+                    // borderRadius: BorderRadius.all(Radius.circular(8)),
+                    // color: Colors.white,
+                    border: Border.all(
+                      color: const Color(0xff0163D5),
+                      width: 2.0,
+                    ),
+                  ),
+                  child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Manually Enter A Recipient'),
+                        Icon(
+                          Icons.add_circle_outline,
+                          color: Color(0xff0163D5),
+                        )
+                      ]),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 38,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xffF6F7F9),
+                // border: Border.all(
+                //   color: const Color(0xff0163D5),
+                //   width: 2.0,
+                // ),
+              ),
+              padding: const EdgeInsets.all(8.0),
+              child: const Icon(
+                Icons.share,
+                color: Color(0xffDEDEDE),
+              ),
+            ),
+            const SizedBox(
+              height: 38,
+            ),
+            const Text("Transfer Tickets Via Email or Text Message"),
+            const Text("Select an Email or mobile number to"),
+            const Text("transfer ticket to your recipient."),
+            const SizedBox(
+              height: 58,
+            ),
             Container(
               height: 45,
               width: screenWidth,
               decoration: const BoxDecoration(
                 color: Color(0xFFEBECED),
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('1 seleted'),
-                    Row(
-                      children: [
-                        Text('Transfar To'),
-                        Icon(Icons.arrow_forward_ios)
-                      ],
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                        // widget.seatTransBottomSheet(context);
+                      },
+                      child: const Row(
+                        children: [
+                          Icon(Icons.arrow_back_ios),
+                          Text('Back'),
+                        ],
+                      ),
                     )
                   ],
                 ),

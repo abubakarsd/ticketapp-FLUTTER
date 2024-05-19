@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ticketapp/pages/ticket/tranfaruser.dart';
 import 'package:ticketapp/pages/ticket/transfarseat.dart';
+import 'package:ticketapp/pages/ticket/transfarto.dart';
 import 'package:ticketapp/pages/ticket/viewbarcode.dart';
 import 'package:ticketapp/services/database_helper.dart';
 import 'package:ticketapp/model/datamodel.dart';
@@ -18,6 +20,7 @@ class TicketListForShow extends StatefulWidget {
 
 class _TicketListForShowState extends State<TicketListForShow> {
   late Future<List<Map<String, dynamic>>> _ticketListFuture;
+  List<Ticket> _selectedTickets = [];
 
   @override
   void initState() {
@@ -231,38 +234,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                height: screenHeight * 0.06,
-                                width: screenWidth * 0.6,
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(
-                                      10), // Adjust the radius as needed
-                                ),
-                                child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      // Image.asset(
-                                      //   'assets/images/image 2.png',
-                                      //   height: 24, // Adjust the height as needed
-                                      //   width: 24, // Adjust the width as needed
-                                      // ),
-                                      Icon(
-                                        Icons.wallet,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      Text(
-                                        'Add to Apple Wallet',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
-                                      )
-                                    ]),
-                              ),
+                              Image.asset('assets/images/image 12.png'),
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
@@ -343,7 +315,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
             children: [
               InkWell(
                 onTap: () {
-                  seatTransBottomSheet(context);
+                  seatTransBottomSheet(context, _selectedTickets);
                 },
                 child: Container(
                   height: screenHeight * 0.055,
@@ -416,6 +388,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
 
   void seatTransBottomSheet(
     BuildContext context,
+    List<Ticket> selectedSeats,
   ) {
     showModalBottomSheet<void>(
         context: context,
@@ -423,7 +396,50 @@ class _TicketListForShowState extends State<TicketListForShow> {
         enableDrag: true,
         isScrollControlled: true,
         builder: (BuildContext context) {
-          return TransfarSeat(section: '');
+          return TicketSelection(
+            eventId: widget.showId,
+            seatTransToBottomSheet: seatTransToBottomSheet,
+            selectedSeats: selectedSeats.map((ticket) => ticket.seat).toList(),
+          );
         });
+  }
+
+  void seatTransToBottomSheet(
+    BuildContext context,
+    List<Ticket> selectedSeats,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return TransfarTo(
+          section: '',
+          seatTransBottomSheet: seatTransBottomSheet,
+          selectedSeats: selectedSeats.map((ticket) => ticket.seat).toList(),
+          seatTransUserBottomSheet: seatTransUserBottomSheet,
+        );
+      },
+    );
+  }
+
+  void seatTransUserBottomSheet(
+    BuildContext context,
+    List<int> selectedSeats,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return TransfarUser(
+          section: '',
+          seatTransBottomSheet: seatTransBottomSheet,
+          selectedSeats: selectedSeats,
+        );
+      },
+    );
   }
 }

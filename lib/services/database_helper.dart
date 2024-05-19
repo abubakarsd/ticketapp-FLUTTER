@@ -195,4 +195,17 @@ class DatabaseHelper {
 
     return maps;
   }
+
+  static Future<List<Ticket>> getAllTicketsForShow(int showId) async {
+    final db = await _getDB();
+    final List<Map<String, dynamic>> maps = await db.query(
+      'Ticket',
+      where: 'showId = ?',
+      whereArgs: [showId],
+    );
+
+    return List.generate(maps.length, (index) {
+      return Ticket.fromJson(maps[index]);
+    });
+  }
 }

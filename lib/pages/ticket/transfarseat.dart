@@ -1,73 +1,227 @@
 import 'package:flutter/material.dart';
+import 'package:ticketapp/model/datamodel.dart';
+import 'package:ticketapp/services/database_helper.dart';
 
-class TransfarSeat extends StatefulWidget {
-  final String section;
-  const TransfarSeat({
-    Key? key,
-    required this.section,
-  }) : super(key: key);
+class TicketSelection extends StatefulWidget {
+  final int eventId;
+  final Function seatTransToBottomSheet;
+  final selectedSeats;
+
+  const TicketSelection(
+      {Key? key,
+      required this.eventId,
+      required this.seatTransToBottomSheet,
+      required this.selectedSeats})
+      : super(key: key);
 
   @override
-  State<TransfarSeat> createState() => _TransfarSeatState();
+  State<TicketSelection> createState() => _TicketSelectionState();
 }
 
-class _TransfarSeatState extends State<TransfarSeat> {
+class _TicketSelectionState extends State<TicketSelection> {
+  late Future<List<Ticket>> _ticketsFuture;
+  List<Ticket> _selectedTickets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTicketsForShow();
+  }
+
+  Future<void> _loadTicketsForShow() async {
+    setState(() {
+      _ticketsFuture = _getTicketsForShow();
+    });
+  }
+
+  Future<List<Ticket>> _getTicketsForShow() async {
+    final List<Map<String, dynamic>> ticketsData =
+        await DatabaseHelper.getTicketsForShow(widget.eventId);
+    return ticketsData
+        .map((ticketData) => Ticket.fromJson(ticketData))
+        .toList();
+  }
+
+  void _toggleTicketSelection(Ticket ticket) {
+    setState(() {
+      if (_selectedTickets.contains(ticket)) {
+        _selectedTickets.remove(ticket);
+      } else {
+        _selectedTickets.add(ticket);
+      }
+      // widget.seatTransToBottomSheet(
+      //     context, _selectedTickets); // Pass selected tickets here
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-    return StatefulBuilder(builder: (context, setState) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Text(
-                    'SELECT SEATS TO TRANSFER',
-                    style: TextStyle(
-                      color: Color(0xFF908E8E),
-                      fontSize: 13,
-                    ),
-                  ),
-                  Divider(
-                    height: 0.5,
-                    thickness: 1,
-                  ),
-                ],
-              ),
-            ),
-            Text(widget.section),
-            Container(
-              height: 45,
-              width: screenWidth,
-              decoration: const BoxDecoration(
-                color: Color(0xFFEBECED),
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+
+    return FutureBuilder<List<Ticket>>(
+      // Adjusted FutureBuilder type
+      future: _ticketsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return const Center(child: Text('Error loading tickets'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No tickets available'));
+        }
+
+        final tickets = snapshot.data!;
+
+        return SizedBox(
+          height: screenHeight * 0.6,
+          width: screenWidth,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   children: [
-                    Text('1 seleted'),
-                    Row(
-                      children: [
-                        Text('Transfar To'),
-                        Icon(Icons.arrow_forward_ios)
-                      ],
-                    )
+                    const Text(
+                      'SELECT SEATS TO TRANSFER',
+                      style: TextStyle(
+                        color: Color(0xFF908E8E),
+                        fontSize: 13,
+                      ),
+                    ),
+                    const Divider(
+                      height: 0.5,
+                      thickness: 1,
+                    ),
+                    Text('${tickets.length.toString()} ticket')
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    });
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FutureBuilder<List<Ticket>>(
+                  future: _ticketsFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else {
+                      final tickets = snapshot.data;
+                      if (tickets == null || tickets.isEmpty) {
+                        return const Center(
+                            child: Text('No tickets available'));
+                      }
+                      return Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        alignment: WrapAlignment.start,
+                        crossAxisAlignment: WrapCrossAlignment.start,
+                        children: tickets.map((ticket) {
+                          final isSelected = _selectedTickets
+                              .contains(ticket); // Check if ticket is selected
+                          return GestureDetector(
+                            onTap: () => _toggleTicketSelection(ticket),
+                            child: Container(
+                              width: 108,
+                              height: 109,
+                              decoration: const BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0xFF908E8E),
+                                    offset: Offset(0, 2),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 31,
+                                    width: screenWidth,
+                                    decoration: const BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8),
+                                      ),
+                                      color: Color(0xFF0163D5),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        ('SEAT ${ticket.seat}'),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 78,
+                                    width: screenWidth,
+                                    child: Center(
+                                      child: Icon(
+                                        isSelected
+                                            ? Icons.check_box
+                                            : Icons.check_box_outline_blank,
+                                        color: isSelected
+                                            ? Colors.blue
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    }
+                  },
+                ),
+              ),
+              Container(
+                height: 45,
+                width: screenWidth,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFEBECED),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text('${_selectedTickets.length} selected'),
+                      InkWell(
+                        onTap: () {
+                          for (Ticket ticket in _selectedTickets) {
+                            print('Selected Ticket: ${ticket.toJson()}');
+                          }
+                          Navigator.pop(context);
+                          widget.seatTransToBottomSheet(
+                              context, _selectedTickets);
+                        },
+                        child: const Row(
+                          children: [
+                            Text('Transfer To'),
+                            Icon(Icons.arrow_forward_ios),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
