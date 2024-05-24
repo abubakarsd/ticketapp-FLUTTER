@@ -250,7 +250,7 @@ class _TicketListState extends State<TicketList> {
                       child: CustomTextField(
                         controller: _rowController,
                         hintText: 'Row',
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.text,
                       ),
                     ),
                     Padding(
@@ -301,7 +301,7 @@ class _TicketListState extends State<TicketList> {
       final Ticket ticket = Ticket(
         showId: _selectedShow!.id,
         selection: _sectionController.text,
-        row: int.parse(_rowController.text),
+        row: _rowController.text,
         seat: int.parse(_seatController.text),
       );
       await DatabaseHelper.addTicket(ticket); // Corrected method call

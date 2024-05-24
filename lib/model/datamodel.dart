@@ -39,7 +39,7 @@ class Show {
   final String time;
   final String name;
   final String location;
-  final double fee;
+  final String fee;
   final String? orderId;
   final String? mapUrl;
   final String? ticketType;
@@ -98,7 +98,7 @@ class Ticket {
   final int? id;
   final int? showId;
   final String selection;
-  final int row;
+  final String row;
   final int seat;
 
   Ticket({
@@ -129,6 +129,46 @@ class Ticket {
       selection: json['selection'] ?? '',
       row: json['row'] ?? 0,
       seat: json['seat'] ?? 0,
+    );
+  }
+}
+
+class TransferInfo {
+  final int id;
+  final String firstName;
+  final String lastName;
+  final String emailPhone;
+  final String note;
+  final List<int> ticketIds;
+
+  TransferInfo({
+    this.id = 0,
+    required this.firstName,
+    required this.lastName,
+    required this.emailPhone,
+    required this.note,
+    required this.ticketIds,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'emailPhone': emailPhone,
+      'note': note,
+    };
+  }
+
+  factory TransferInfo.fromJson(Map<String, dynamic> json) {
+    return TransferInfo(
+      id: json['id'],
+      firstName: json['firstName'],
+      lastName: json['lastName'],
+      emailPhone: json['emailPhone'],
+      note: json['note'],
+      ticketIds:
+          (json['ticketIds'] as List<dynamic>).map((e) => e as int).toList(),
     );
   }
 }

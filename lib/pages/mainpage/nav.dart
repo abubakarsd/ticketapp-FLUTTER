@@ -38,11 +38,11 @@ class _NavState extends State<Nav> {
         bottomNavigationBar: Container(
           height: screenHeight * 0.099,
           decoration: BoxDecoration(
-            border: Border.all(
-              width: 0.1,
-              color: Colors.black,
-            ),
-          ),
+              // border: Border.all(
+              //   width: 0.1,
+              //   color: Colors.black,
+              // ),
+              ),
           child: BottomNavigationBar(
             currentIndex: _selectedIndex,
             onTap: _onItemTap,

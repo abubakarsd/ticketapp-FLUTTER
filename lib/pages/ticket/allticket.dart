@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ticketapp/pages/ticket/fulltransfar.dart';
 import 'package:ticketapp/pages/ticket/tranfaruser.dart';
 import 'package:ticketapp/pages/ticket/transfarseat.dart';
 import 'package:ticketapp/pages/ticket/transfarto.dart';
@@ -21,6 +22,8 @@ class TicketListForShow extends StatefulWidget {
 class _TicketListForShowState extends State<TicketListForShow> {
   late Future<List<Map<String, dynamic>>> _ticketListFuture;
   List<Ticket> _selectedTickets = [];
+  int userId = 1;
+  bool haveUser = false;
 
   @override
   void initState() {
@@ -29,8 +32,18 @@ class _TicketListForShowState extends State<TicketListForShow> {
   }
 
   Future<void> _loadTicketsForShow() async {
+    final tickets = await DatabaseHelper.getTicketsForShow(widget.showId);
+    // Check if any ticket has a transferEmail
+    for (var ticket in tickets) {
+      if (ticket['transferEmail'] != null) {
+        setState(() {
+          haveUser = true;
+        });
+        break; // No need to continue once we find a ticket with transferEmail
+      }
+    }
     setState(() {
-      _ticketListFuture = DatabaseHelper.getTicketsForShow(widget.showId);
+      _ticketListFuture = Future.value(tickets);
     });
   }
 
@@ -67,7 +80,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
           ],
         ),
       ),
-      body: Column(
+      body: ListView(
         children: [
           FutureBuilder<List<Map<String, dynamic>>>(
             future: _ticketListFuture,
@@ -85,20 +98,23 @@ class _TicketListForShowState extends State<TicketListForShow> {
                     children: snapshot.data!.map((ticket) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
+                        child: Container(
                           width: screenWidth * 0.9,
-                          height: screenHeight * 0.63,
+                          height: 576,
+                          color: const Color(0xFFF3F3F3),
                           child: Column(
                             children: [
                               Container(
-                                height: screenHeight * 0.055,
+                                height: 40,
                                 width: screenWidth,
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     topRight: Radius.circular(8),
                                   ),
-                                  color: Color(0xFF0163D5),
+                                  color: ticket['transferEmail'] == null
+                                      ? const Color(0xFF0163D5)
+                                      : const Color(0xFF4F5B65),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -111,10 +127,12 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                 ),
                               ),
                               Container(
-                                height: screenHeight * 0.07,
+                                height: 73,
                                 width: screenWidth,
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 18, 118, 232),
+                                decoration: BoxDecoration(
+                                  color: ticket['transferEmail'] == null
+                                      ? const Color.fromARGB(255, 18, 118, 232)
+                                      : const Color(0xFF576570),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -184,7 +202,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                 ),
                               ),
                               Container(
-                                height: screenHeight * 0.2,
+                                height: 201,
                                 width: screenWidth,
                                 decoration: BoxDecoration(
                                   // color: Color.fromARGB(255, 111, 110, 110),
@@ -197,6 +215,13 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
+                                    ticket['transferEmail'] == null
+                                        ? const SizedBox.shrink()
+                                        : const Icon(
+                                            Icons.arrow_right_outlined),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
                                     Text(
                                       ticket['artistName'],
                                       style: const TextStyle(
@@ -214,74 +239,184 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              const Text(
-                                'Entry Gate',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                ('ENTER DOOR ${ticket['fee']}'),
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Image.asset('assets/images/image 12.png'),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        viewBarcodeBottomSheet(
-                                          context,
-                                          ticket['selection'],
-                                          ticket['ticketType'],
-                                          ticket['row'],
-                                          ticket['seat'],
-                                          ticket['fee'],
-                                        );
-                                      },
-                                      child: const Text(
-                                        'View Barcode',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF0163D5)),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 10,
+                                    )
+                                  : Container(
+                                      height: 40,
+                                      width: screenWidth,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF0163D5),
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          ('Sent'),
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    const Text(
-                                      'Ticket Details',
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFF0163D5)),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 20,
                                     )
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const Text(
+                                      'Entry Gate',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 10,
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? Text(
+                                      ('ENTER DOOR ${ticket['fee']}'),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xFF908E8E),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? Image.asset('assets/images/image 12.png')
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 20,
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              viewBarcodeBottomSheet(
+                                                context,
+                                                ticket['selection'],
+                                                ticket['ticketType'],
+                                                ticket['row'],
+                                                ticket['seat'],
+                                                ticket['fee'],
+                                              );
+                                            },
+                                            child: const Text(
+                                              'View Barcode',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF0163D5)),
+                                            ),
+                                          ),
+                                          const Text(
+                                            'Ticket Details',
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF0163D5)),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox(
+                                      height: 10,
+                                    )
+                                  : const SizedBox.shrink(),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const SizedBox(
+                                      height: 20,
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const Text(
+                                      '1 ticket sent to',
+                                      style: TextStyle(
+                                        color: Color(
+                                          0xFF444444,
+                                        ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : Text(
+                                      '${ticket['transferEmail']}',
+                                      style: const TextStyle(
+                                        color: Color(
+                                          0xFF908E8E,
+                                        ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const Text(
+                                      'Waiting for recipient to claim.',
+                                      style: TextStyle(
+                                        color: Color(
+                                          0xFF908E8E,
+                                        ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const SizedBox(
+                                      height: 40,
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const Text(
+                                      'Cancel Transfer',
+                                      style: TextStyle(
+                                        color: Color(
+                                          0xFF0458BA,
+                                        ),
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                              ticket['transferEmail'] == null
+                                  ? const SizedBox.shrink()
+                                  : const SizedBox(
+                                      height: 40,
+                                    ),
                               Container(
                                 height: screenHeight * 0.055,
                                 width: screenWidth,
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.only(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(8),
                                     bottomRight: Radius.circular(8),
                                   ),
-                                  color: Color(0xFF0163D5),
+                                  color: ticket['transferEmail'] == null
+                                      ? const Color.fromARGB(255, 18, 118, 232)
+                                      : const Color(0xFF576570),
                                 ),
                                 child: const Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -293,8 +428,9 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                     Text(
                                       ('ticketmaster.verified'),
                                       style: TextStyle(
-                                        color: Colors.white,
+                                        color: Color(0xFFF3F3F3),
                                         fontSize: 15,
+                                        fontStyle: FontStyle.italic,
                                       ),
                                     ),
                                   ],
@@ -310,47 +446,73 @@ class _TicketListForShowState extends State<TicketListForShow> {
               }
             },
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              InkWell(
-                onTap: () {
-                  seatTransBottomSheet(context, _selectedTickets);
-                },
-                child: Container(
+          const SizedBox(
+            height: 20,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () {
+                    seatTransBottomSheet(context, _selectedTickets);
+                  },
+                  child: haveUser == true
+                      ? Container(
+                          height: screenHeight * 0.055,
+                          width: screenWidth * 0.4,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            color: Color(0xFFEAEAEA),
+                          ),
+                          child: const Center(
+                            child: Text('Transfar',
+                                style: TextStyle(
+                                  color: Color(0xFFFFFFFF),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                        )
+                      : Container(
+                          height: screenHeight * 0.055,
+                          width: screenWidth * 0.4,
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            color: Color(0xff0163D5),
+                          ),
+                          child: const Center(
+                            child: Text('Transfar',
+                                style: TextStyle(
+                                  color: Color(0xFFFFFFFF),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                )),
+                          ),
+                        ),
+                ),
+                Container(
                   height: screenHeight * 0.055,
                   width: screenWidth * 0.4,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
-                    color: Color(0xff0163D5),
+                    color: Color(0xFFEAEAEA),
                   ),
                   child: const Center(
-                    child: Text('Transfar',
+                    child: Text('Sell',
                         style: TextStyle(
                           color: Color(0xFFFFFFFF),
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                         )),
                   ),
-                ),
-              ),
-              Container(
-                height: screenHeight * 0.055,
-                width: screenWidth * 0.4,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  color: Color(0xFFEAEAEA),
-                ),
-                child: const Center(
-                  child: Text('Sell',
-                      style: TextStyle(
-                        color: Color(0xFFFFFFFF),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      )),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
+          ),
+          const SizedBox(
+            height: 20,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -399,7 +561,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
           return TicketSelection(
             eventId: widget.showId,
             seatTransToBottomSheet: seatTransToBottomSheet,
-            selectedSeats: selectedSeats.map((ticket) => ticket.seat).toList(),
+            selectedSeats: selectedSeats.map((ticket) => ticket.id).toList(),
           );
         });
   }
@@ -417,7 +579,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
         return TransfarTo(
           section: '',
           seatTransBottomSheet: seatTransBottomSheet,
-          selectedSeats: selectedSeats.map((ticket) => ticket.seat).toList(),
+          selectedSeats: selectedSeats.map((ticket) => ticket.id!).toList(),
           seatTransUserBottomSheet: seatTransUserBottomSheet,
         );
       },
@@ -437,7 +599,26 @@ class _TicketListForShowState extends State<TicketListForShow> {
         return TransfarUser(
           section: '',
           seatTransBottomSheet: seatTransBottomSheet,
+          seatTransUserIdBottomSheet: seatTransUserIdBottomSheet,
           selectedSeats: selectedSeats,
+          userId: userId,
+        );
+      },
+    );
+  }
+
+  void seatTransUserIdBottomSheet(
+    BuildContext context,
+    int userId,
+  ) {
+    showModalBottomSheet<void>(
+      context: context,
+      isDismissible: true,
+      enableDrag: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return TransfarSymbol(
+          userId: userId,
         );
       },
     );

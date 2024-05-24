@@ -49,8 +49,6 @@ class _TicketSelectionState extends State<TicketSelection> {
       } else {
         _selectedTickets.add(ticket);
       }
-      // widget.seatTransToBottomSheet(
-      //     context, _selectedTickets); // Pass selected tickets here
     });
   }
 
@@ -94,7 +92,19 @@ class _TicketSelectionState extends State<TicketSelection> {
                       height: 0.5,
                       thickness: 1,
                     ),
-                    Text('${tickets.length.toString()} ticket')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          '${tickets.length.toString()} tickets',
+                          textAlign: TextAlign.right,
+                          style: const TextStyle(
+                            color: Color(0xFF908E8E),
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),
@@ -167,11 +177,11 @@ class _TicketSelectionState extends State<TicketSelection> {
                                     child: Center(
                                       child: Icon(
                                         isSelected
-                                            ? Icons.check_box
-                                            : Icons.check_box_outline_blank,
+                                            ? Icons.check_circle
+                                            : Icons.circle_outlined,
                                         color: isSelected
                                             ? Colors.blue
-                                            : Colors.black,
+                                            : Color(0xFF908E8E),
                                       ),
                                     ),
                                   ),
@@ -200,17 +210,25 @@ class _TicketSelectionState extends State<TicketSelection> {
                       Text('${_selectedTickets.length} selected'),
                       InkWell(
                         onTap: () {
-                          for (Ticket ticket in _selectedTickets) {
-                            print('Selected Ticket: ${ticket.toJson()}');
+                          if (_selectedTickets.isNotEmpty) {
+                            for (Ticket ticket in _selectedTickets) {
+                              print('Selected Ticket: ${ticket.toJson()}');
+                            }
+                            Navigator.pop(context);
+                            widget.seatTransToBottomSheet(
+                                context, _selectedTickets);
                           }
-                          Navigator.pop(context);
-                          widget.seatTransToBottomSheet(
-                              context, _selectedTickets);
                         },
                         child: const Row(
                           children: [
-                            Text('Transfer To'),
-                            Icon(Icons.arrow_forward_ios),
+                            Text(
+                              'Transfer To',
+                              style: TextStyle(
+                                  color: Color(0xFF0163D5),
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Icon(Icons.arrow_forward_ios,
+                                color: Color(0xFF0163D5)),
                           ],
                         ),
                       )

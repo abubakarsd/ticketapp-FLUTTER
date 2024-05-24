@@ -15,6 +15,13 @@ class DatabaseHelper {
           "CREATE TABLE Show(id INTEGER PRIMARY KEY, artistId INTEGER, month TEXT NOT NULL, day INTEGER NOT NULL, time TEXT NOT NULL, name TEXT NOT NULL, location TEXT NOT NULL, fee TEXT NOT NULL, orderId TEXT, mapUrl TEXT, ticketType TEXT, FOREIGN KEY(artistId) REFERENCES Artist(id));");
       await db.execute(
           "CREATE TABLE Ticket(id INTEGER PRIMARY KEY, showId INTEGER, selection TEXT NOT NULL, row TEXT NOT NULL, seat INTEGER NOT NULL, FOREIGN KEY(showId) REFERENCES Show(id));");
+      await db.execute(
+        "CREATE TABLE TransferInfo (id INTEGER PRIMARY KEY,firstName TEXT NOT NULL,lastName TEXT NOT NULL,emailPhone TEXT NOT NULL,note TEXT NOT NULL);",
+      );
+
+      await db.execute(
+        "CREATE TABLE TransferTicket (id INTEGER PRIMARY KEY,transferId INTEGER NOT NULL,ticketId INTEGER NOT NULL,FOREIGN KEY (transferId) REFERENCES TransferInfo(id),FOREIGN KEY (ticketId) REFERENCES Ticket(id));",
+      );
     }, version: _version);
   }
 
@@ -182,30 +189,122 @@ class DatabaseHelper {
     return maps;
   }
 
+  static Future<void> printSchema() async {
+    final db = await _getDB();
+    List<Map<String, dynamic>> result =
+        await db.rawQuery('PRAGMA table_info(TransferInfo)');
+    print(result);
+    result = await db.rawQuery('PRAGMA table_info(TransferTicket)');
+    print(result);
+  }
+
   static Future<List<Map<String, dynamic>>> getTicketsForShow(
       int showId) async {
     final db = await _getDB();
     final List<Map<String, dynamic>> maps = await db.rawQuery('''
-    SELECT Ticket.*, Show.fee AS fee, Show.ticketType AS ticketType, Artist.name AS artistName, Artist.imageBytes AS artistImage
+    SELECT Ticket.*, 
+           Show.fee AS fee, 
+           Show.ticketType AS ticketType, 
+           Artist.name AS artistName, 
+           Artist.imageBytes AS artistImage,
+           TransferInfo.emailPhone AS transferEmail
     FROM Ticket
     INNER JOIN Show ON Ticket.showId = Show.id
     INNER JOIN Artist ON Show.artistId = Artist.id
+    LEFT JOIN TransferTicket ON Ticket.id = TransferTicket.ticketId
+    LEFT JOIN TransferInfo ON TransferTicket.transferId = TransferInfo.id
     WHERE Show.id = ?
   ''', [showId]);
 
     return maps;
   }
 
-  static Future<List<Ticket>> getAllTicketsForShow(int showId) async {
+  static Future<int> addTransferInfo(TransferInfo transferInfo) async {
     final db = await _getDB();
-    final List<Map<String, dynamic>> maps = await db.query(
-      'Ticket',
-      where: 'showId = ?',
-      whereArgs: [showId],
-    );
+    int transferId = 0;
 
-    return List.generate(maps.length, (index) {
-      return Ticket.fromJson(maps[index]);
-    });
+    try {
+      // Print the schema to verify table structure
+      await printSchema();
+
+      // Begin a database transaction
+      transferId = await db.transaction((txn) async {
+        // Insert transfer information
+        print("Inserting into TransferInfo: ${transferInfo.toJson()}");
+        int transferId = await txn.insert(
+          "TransferInfo",
+          transferInfo.toJson()..remove('id'),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        print('Insert TransferInfo ID: $transferId');
+
+        // Check if the transferId was inserted correctly
+        if (transferId == 0) {
+          throw Exception('Failed to insert TransferInfo');
+        }
+
+        // Insert associated ticket IDs
+        for (int ticketId in transferInfo.ticketIds) {
+          print(
+              "Inserting into TransferTicket: {'transferId': $transferId, 'ticketId': $ticketId}");
+          int ticketInsertResult = await txn.insert("TransferTicket", {
+            'transferId': transferId,
+            'ticketId': ticketId,
+          });
+
+          print('Insert TransferTicket Result: $ticketInsertResult');
+
+          // Check if the ticket was inserted correctly
+          if (ticketInsertResult == 0) {
+            throw Exception('Failed to insert TransferTicket');
+          }
+        }
+
+        return transferId; // Return transfer ID
+      });
+
+      print('Transfer ID: $transferId');
+      return transferId;
+    } catch (e) {
+      print('Failed to save transfer information: $e');
+      return 0;
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getUserTickets(int userId) async {
+    final db = await _getDB();
+    try {
+      // Query tickets associated with the provided user ID
+      final List<Map<String, dynamic>> data = await db.rawQuery('''
+        SELECT * FROM TransferInfo
+        WHERE Id = ?
+      ''', [userId]);
+
+      return data;
+    } catch (e) {
+      print('Failed to get user tickets: $e');
+      return [];
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> getTicketsByTransferId(
+      int transferId) async {
+    print(transferId);
+    final db = await _getDB();
+    try {
+      // Query tickets associated with the provided transfer ID
+      final List<Map<String, dynamic>> data = await db.rawQuery('''
+      SELECT Ticket.row, Ticket.seat, Ticket.selection
+      FROM TransferTicket
+      INNER JOIN Ticket ON TransferTicket.ticketId = Ticket.id
+      WHERE TransferTicket.transferId = ?
+    ''', [transferId]);
+
+      return data;
+    } catch (e) {
+      print('Failed to get tickets by transfer ID: $e');
+      return [];
+    }
   }
 }

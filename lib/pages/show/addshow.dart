@@ -251,7 +251,7 @@ class _AddShowState extends State<AddShow> {
         day: int.parse(day),
         time: time,
         location: _showLocation.text,
-        fee: double.parse(_entryGate.text), // Convert _entryGate.text to double
+        fee: _entryGate.text,
         orderId: _orderID.text,
         mapUrl: _mapURL.text,
         ticketType: _ticketType.text,

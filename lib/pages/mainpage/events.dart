@@ -90,14 +90,14 @@ class _MyEventsState extends State<MyEvents> {
                       );
                     },
                     child: Container(
-                      height: screenHeight * 0.26,
-                      width: screenWidth * 0.7,
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(255, 111, 110, 110),
-                        // image: DecorationImage(
-                        //   image: MemoryImage(artistImage),
-                        //   fit: BoxFit.cover,
-                        // ),
+                      height: 167,
+                      width: 393,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 111, 110, 110),
+                        image: DecorationImage(
+                          image: MemoryImage(artistImage),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                       child: Column(
                         children: [
@@ -112,8 +112,8 @@ class _MyEventsState extends State<MyEvents> {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     Container(
-                                      height: 90,
-                                      width: 127,
+                                      height: 77,
+                                      width: 107,
                                       decoration: BoxDecoration(
                                         color: const Color.fromARGB(
                                             255, 111, 110, 110),
@@ -132,12 +132,27 @@ class _MyEventsState extends State<MyEvents> {
                                     MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Text('Order #${show.orderId}'),
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Text(
+                                      'Order #${show.orderId}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                   const SizedBox(
                                     height: 50,
                                   ),
-                                  const Icon(Icons.arrow_forward_ios,
-                                      color: Colors.white),
+                                  const Padding(
+                                    padding: EdgeInsets.only(
+                                      right: 10,
+                                    ),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -153,7 +168,7 @@ class _MyEventsState extends State<MyEvents> {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      getMonthName(show.month),
+                                      getMonthName(show.month).toUpperCase(),
                                       style: const TextStyle(
                                           fontSize: 18, color: Colors.white),
                                     ),
@@ -163,7 +178,10 @@ class _MyEventsState extends State<MyEvents> {
                                     Text(
                                       show.day.toString(),
                                       style: const TextStyle(
-                                          fontSize: 15, color: Colors.white),
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),

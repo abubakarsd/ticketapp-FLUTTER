@@ -58,14 +58,26 @@ class _TransfarToState extends State<TransfarTo> {
                   // color: Colors.white,
                   border: Border.all(
                     color: const Color(0xff0163D5),
-                    width: 2.0,
+                    width: 1.0,
                   ),
+                  borderRadius: const BorderRadius.all(Radius.circular(3)),
                 ),
                 child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('Select From Contacts'),
-                      Icon(Icons.contact_page_outlined)
+                      Text(
+                        'Select From Contacts',
+                        style: TextStyle(
+                          color: const Color(0xff0163D5),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Icon(
+                        Icons.contact_page_outlined,
+                        color: const Color(0xff0163D5),
+                      )
                     ]),
               ),
             ),
@@ -84,13 +96,21 @@ class _TransfarToState extends State<TransfarTo> {
                     // color: Colors.white,
                     border: Border.all(
                       color: const Color(0xff0163D5),
-                      width: 2.0,
+                      width: 1.0,
                     ),
                   ),
                   child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Manually Enter A Recipient'),
+                        Text(
+                          'Manually Enter A Recipient',
+                          style: TextStyle(
+                            color: const Color(0xff0163D5),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
                         Icon(
                           Icons.add_circle_outline,
                           color: Color(0xff0163D5),

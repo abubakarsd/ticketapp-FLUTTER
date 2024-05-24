@@ -188,7 +188,7 @@ class _HomeState extends State<Home> {
             ),
           ),
 
-          Container(
+          SizedBox(
             width: screenWidth * 0.9,
             height: screenHeight * 0.7,
             child: FutureBuilder<List<Map<String, dynamic>>>(
@@ -207,7 +207,7 @@ class _HomeState extends State<Home> {
                     itemBuilder: (context, index) {
                       final show = Show.fromJson(showData[index]);
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.only(left: 10, right: 10),
                         child: Container(
                             height: 320,
                             decoration: const BoxDecoration(),
@@ -217,8 +217,10 @@ class _HomeState extends State<Home> {
                               children: [
                                 Container(
                                   height: 249,
-                                  width: screenWidth * 0.9,
+                                  width: 393,
                                   decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(4)),
                                     image: DecorationImage(
                                       image: MemoryImage(
                                         showData[index]['artistImage'],
@@ -228,21 +230,23 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 const Padding(
-                                  padding: EdgeInsets.all(8.0),
+                                  padding: EdgeInsets.only(left: 10),
                                   child: Text(
                                     'Tickets are on sale now',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.w300),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 14,
+                                        color: Color(0xFF444444)),
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 8),
+                                  padding: const EdgeInsets.only(left: 10),
                                   child: Text(
                                     show.name,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17,
+                                        color: Color(0xFF444444)),
                                   ),
                                 )
                               ],
