@@ -2,22 +2,25 @@
 
 import 'package:flutter/material.dart';
 import 'package:ticketapp/model/datamodel.dart';
+import 'package:ticketapp/pages/ticket/fulltransfar.dart';
 import 'package:ticketapp/services/database_helper.dart';
 
 class TransfarUser extends StatefulWidget {
   final String section;
   final Function seatTransBottomSheet;
   final List<int> selectedSeats;
-  final Function seatTransUserIdBottomSheet;
   final int userId;
+  final int showId;
+  final String showData;
 
   const TransfarUser({
     Key? key,
     required this.section,
     required this.seatTransBottomSheet,
     required this.selectedSeats,
-    required this.seatTransUserIdBottomSheet,
     required this.userId,
+    required this.showId,
+    required this.showData,
   }) : super(key: key);
 
   @override
@@ -64,10 +67,17 @@ class _TransfarUserState extends State<TransfarUser> {
       if (transferId > 0) {
         print(transferId);
         Navigator.pop(context);
-        widget.seatTransUserIdBottomSheet(
+        Navigator.push(
           context,
-          transferId,
+          MaterialPageRoute(
+            builder: (context) => TransfarSymbol(
+              userId: transferId,
+              showId: widget.showId,
+              showData: widget.showData,
+            ),
+          ),
         );
+
         print('Transfer information saved with ID: $transferId');
       } else {
         // If there was an issue saving the transfer information
@@ -92,7 +102,7 @@ class _TransfarUserState extends State<TransfarUser> {
     return StatefulBuilder(
       builder: (context, setState) {
         return SizedBox(
-          height: screenHeight * 0.65,
+          height: screenHeight * 0.7,
           width: screenWidth,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,9 +127,17 @@ class _TransfarUserState extends State<TransfarUser> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 16.0),
                 child: Text(
                   "${widget.selectedSeats.length.toString()} Ticket Selected",
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  "Sec 171, Row Q, Seat 171",
+                  style: TextStyle(fontWeight: FontWeight.w500),
                   textAlign: TextAlign.left,
                 ),
               ),
@@ -128,44 +146,71 @@ class _TransfarUserState extends State<TransfarUser> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    const Text('First Name'),
                     TextField(
                       controller: _firstNameController,
                       decoration: const InputDecoration(
-                        labelText: 'First Name',
+                        contentPadding: EdgeInsets.all(8),
+                        isCollapsed: true,
+                        isDense: true,
+                        // labelText: 'First Name',
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Color(0xFF908E8E)),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(0),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
+                    const Text('Last Name'),
                     TextField(
                       controller: _lastNameController,
                       decoration: const InputDecoration(
-                        labelText: 'Last Name',
+                        contentPadding: EdgeInsets.all(8),
+                        isCollapsed: true,
+                        isDense: true,
+                        // labelText: 'Last Name',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF908E8E)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF908E8E),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(0),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
+                    const Text('Email/Phone'),
                     TextField(
                       controller: _emailPhoneController,
                       decoration: const InputDecoration(
-                        labelText: 'Email/Phone',
+                        contentPadding: EdgeInsets.all(10),
+                        isCollapsed: true,
+                        isDense: true,
+                        // labelText: 'Email/Phone',
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Color(0xFF908E8E)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF908E8E),
+                          ),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(0),
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
+                    Text('Note'),
                     TextField(
                       controller: _noteController,
                       decoration: InputDecoration(
-                        labelText: 'Note',
+                        // labelText: 'Note',
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                          borderSide:
-                              const BorderSide(color: Color(0xFF908E8E)),
+                          borderRadius: BorderRadius.circular(0),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF908E8E),
+                          ),
                         ),
                       ),
                       maxLength: maxCharacters,

@@ -75,7 +75,8 @@ class _TicketSelectionState extends State<TicketSelection> {
           height: screenHeight * 0.6,
           width: screenWidth,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -194,6 +195,9 @@ class _TicketSelectionState extends State<TicketSelection> {
                     }
                   },
                 ),
+              ),
+              SizedBox(
+                height: 240,
               ),
               Container(
                 height: 45,

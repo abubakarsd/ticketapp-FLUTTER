@@ -51,7 +51,7 @@ class _MyEventsState extends State<MyEvents> {
       body: Column(
         children: [
           const Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
             child: Row(
               children: [
                 Text('Upcoming Events'),
@@ -60,6 +60,28 @@ class _MyEventsState extends State<MyEvents> {
                 ),
                 Text('Past Events'),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              height: 2,
+              width: 393,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.blue,
+                    Color(0xFF444444),
+                  ],
+                  begin: Alignment.bottomLeft,
+                  end: Alignment.bottomRight,
+
+                  stops: [
+                    0.0,
+                    1.0
+                  ], // Adjust stops to control where the gradient changes
+                ),
+              ),
             ),
           ),
           Expanded(
@@ -78,7 +100,7 @@ class _MyEventsState extends State<MyEvents> {
                   child: InkWell(
                     onTap: () {
                       String showData =
-                          '${getMonthName(show.month)} ${show.day}, ${show.time} ${show.location}';
+                          '${show.weekday}, ${getMonthName(show.month)} ${show.day}, ${show.time} ${show.location}';
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -99,120 +121,142 @@ class _MyEventsState extends State<MyEvents> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                      child: Container(
+                        color: const Color.fromARGB(222, 124, 123, 123),
+                        height: 167,
+                        width: 393,
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 77,
+                                        width: 107,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 111, 110, 110),
+                                          image: DecorationImage(
+                                            image: MemoryImage(artistImage),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                // child: Image.memory(artistImage)),
+                                Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Container(
-                                      height: 77,
-                                      width: 107,
-                                      decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 111, 110, 110),
-                                        image: DecorationImage(
-                                          image: MemoryImage(artistImage),
-                                          fit: BoxFit.cover,
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 10),
+                                      child: Text(
+                                        'Order #${show.orderId}',
+                                        style: const TextStyle(
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              // child: Image.memory(artistImage)),
-                              Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 10),
-                                    child: Text(
-                                      'Order #${show.orderId}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 50,
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.only(
-                                      right: 10,
-                                    ),
-                                    child: Icon(
-                                      Icons.arrow_forward_ios,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      getMonthName(show.month).toUpperCase(),
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.white),
-                                    ),
                                     const SizedBox(
-                                      width: 20,
+                                      height: 50,
                                     ),
-                                    Text(
-                                      show.day.toString(),
-                                      style: const TextStyle(
-                                        fontSize: 15,
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        right: 10,
+                                      ),
+                                      child: Icon(
+                                        Icons.arrow_forward_ios,
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(
-                                  width: 30,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      show.time,
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.white),
-                                    ),
-                                    Text(
-                                      artistName,
-                                      style: const TextStyle(
-                                          fontSize: 15, color: Colors.white),
-                                    ),
-                                    Text(
-                                      show.location,
-                                      style: const TextStyle(
-                                          fontSize: 15, color: Colors.white),
-                                    ),
-                                  ],
-                                )
                               ],
                             ),
-                          )
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        getMonthName(show.month).toUpperCase(),
+                                        style: const TextStyle(
+                                            fontSize: 18, color: Colors.white),
+                                      ),
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        show.day.toString(),
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    width: 30,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            '${show.weekday} -',
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          Text(
+                                            show.time,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        artistName,
+                                        style: const TextStyle(
+                                            fontSize: 15, color: Colors.white),
+                                      ),
+                                      Text(
+                                        show.location,
+                                        style: const TextStyle(
+                                            fontSize: 15, color: Colors.white),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

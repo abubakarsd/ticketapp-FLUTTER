@@ -43,6 +43,7 @@ class Show {
   final String? orderId;
   final String? mapUrl;
   final String? ticketType;
+  final String weekday;
 
   Show({
     this.id,
@@ -53,6 +54,7 @@ class Show {
     required this.name,
     required this.location,
     required this.fee,
+    required this.weekday,
     this.orderId,
     this.mapUrl,
     this.ticketType,
@@ -71,6 +73,7 @@ class Show {
       'orderId': orderId,
       'mapUrl': mapUrl,
       'ticketType': ticketType,
+      'weekday': weekday,
     };
   }
 
@@ -79,18 +82,18 @@ class Show {
       throw ArgumentError('JSON cannot be null');
     }
     return Show(
-      id: json['id'],
-      artistId: json['artistId'],
-      month: json['month'] ?? '',
-      day: json['day'] ?? 1,
-      time: json['time'] ?? '',
-      name: json['name'] ?? '',
-      location: json['location'] ?? '',
-      fee: json['fee'] ?? 0.0,
-      orderId: json['orderId'],
-      mapUrl: json['mapUrl'],
-      ticketType: json['ticketType'],
-    );
+        id: json['id'],
+        artistId: json['artistId'],
+        month: json['month'] ?? '',
+        day: json['day'] ?? 1,
+        time: json['time'] ?? '',
+        name: json['name'] ?? '',
+        location: json['location'] ?? '',
+        fee: json['fee'] ?? 0.0,
+        orderId: json['orderId'],
+        mapUrl: json['mapUrl'],
+        ticketType: json['ticketType'],
+        weekday: json['weekday']);
   }
 }
 

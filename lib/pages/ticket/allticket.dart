@@ -217,23 +217,33 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                   children: [
                                     ticket['transferEmail'] == null
                                         ? const SizedBox.shrink()
-                                        : const Icon(
-                                            Icons.arrow_right_outlined),
+                                        : Image.asset(
+                                            'assets/images/arrow-circle-right_svgrepo.com.png'),
                                     const SizedBox(
                                       height: 20,
                                     ),
-                                    Text(
-                                      ticket['artistName'],
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      widget.showData,
-                                      style: const TextStyle(
-                                          fontSize: 18, color: Colors.white),
+                                    Container(
+                                      color: const Color.fromARGB(
+                                          67, 168, 168, 168),
+                                      width: screenWidth,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            ticket['artistName'],
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          const SizedBox(width: 5),
+                                          Text(
+                                            widget.showData,
+                                            style: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                     const SizedBox(width: 20),
                                   ],
@@ -418,14 +428,15 @@ class _TicketListForShowState extends State<TicketListForShow> {
                                       ? const Color.fromARGB(255, 18, 118, 232)
                                       : const Color(0xFF576570),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.airplane_ticket),
-                                    SizedBox(
+                                    Image.asset(
+                                        'assets/images/tickets_svgrepo.com.png'),
+                                    const SizedBox(
                                       width: 5,
                                     ),
-                                    Text(
+                                    const Text(
                                       ('ticketmaster.verified'),
                                       style: TextStyle(
                                         color: Color(0xFFF3F3F3),
@@ -599,28 +610,29 @@ class _TicketListForShowState extends State<TicketListForShow> {
         return TransfarUser(
           section: '',
           seatTransBottomSheet: seatTransBottomSheet,
-          seatTransUserIdBottomSheet: seatTransUserIdBottomSheet,
           selectedSeats: selectedSeats,
           userId: userId,
+          showId: widget.showId,
+          showData: widget.showData,
         );
       },
     );
   }
 
-  void seatTransUserIdBottomSheet(
-    BuildContext context,
-    int userId,
-  ) {
-    showModalBottomSheet<void>(
-      context: context,
-      isDismissible: true,
-      enableDrag: true,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return TransfarSymbol(
-          userId: userId,
-        );
-      },
-    );
-  }
+  // void seatTransUserIdBottomSheet(
+  //   BuildContext context,
+  //   int userId,
+  // ) {
+  //   showModalBottomSheet<void>(
+  //     context: context,
+  //     isDismissible: true,
+  //     enableDrag: true,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       return TransfarSymbol(
+  //         userId: userId,
+  //       );
+  //     },
+  //   );
+  // }
 }

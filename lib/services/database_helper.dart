@@ -12,7 +12,7 @@ class DatabaseHelper {
       await db.execute(
           "CREATE TABLE Artist(id INTEGER PRIMARY KEY, name TEXT NOT NULL, imageBytes BLOB NOT NULL);");
       await db.execute(
-          "CREATE TABLE Show(id INTEGER PRIMARY KEY, artistId INTEGER, month TEXT NOT NULL, day INTEGER NOT NULL, time TEXT NOT NULL, name TEXT NOT NULL, location TEXT NOT NULL, fee TEXT NOT NULL, orderId TEXT, mapUrl TEXT, ticketType TEXT, FOREIGN KEY(artistId) REFERENCES Artist(id));");
+          "CREATE TABLE Show(id INTEGER PRIMARY KEY, artistId INTEGER, month TEXT NOT NULL, day INTEGER NOT NULL, time TEXT NOT NULL, weekday TEXT NOT NULL,name TEXT NOT NULL, location TEXT NOT NULL, fee TEXT NOT NULL, orderId TEXT, mapUrl TEXT, ticketType TEXT, FOREIGN KEY(artistId) REFERENCES Artist(id));");
       await db.execute(
           "CREATE TABLE Ticket(id INTEGER PRIMARY KEY, showId INTEGER, selection TEXT NOT NULL, row TEXT NOT NULL, seat INTEGER NOT NULL, FOREIGN KEY(showId) REFERENCES Show(id));");
       await db.execute(
@@ -306,5 +306,18 @@ class DatabaseHelper {
       print('Failed to get tickets by transfer ID: $e');
       return [];
     }
+  }
+
+  static Future<List<Map<String, dynamic>>> getShowById(int id) async {
+    final db = await _getDB();
+
+    final List<Map<String, dynamic>> maps = await db.rawQuery('''
+    SELECT Show.*, Artist.name AS artistName, Artist.imageBytes AS artistImage
+    FROM Show
+    LEFT JOIN Artist ON Show.artistId = Artist.id
+    WHERE Show.id = ?
+  ''', [id]);
+
+    return maps;
   }
 }

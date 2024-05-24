@@ -48,23 +48,28 @@ class _NavState extends State<Nav> {
             onTap: _onItemTap,
             selectedItemColor: const Color(0xFF127CF7),
             unselectedItemColor: Colors.black,
-            type:
-                BottomNavigationBarType.fixed, // Ensure labels are always shown
+            type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.home),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 0
+                    ? Image.asset('assets/images/home-house_svgrepo.com.png')
+                    : Image.asset('assets/images/home-house_svgrepo.com-.png'),
                 label: 'Home',
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.search),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/images/🦆 icon _search_.png'),
                 label: 'Search',
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/images/Vector.png'),
                 label: 'Favorites',
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.event_available),
+              BottomNavigationBarItem(
+                icon: _selectedIndex == 3
+                    ? Image.asset(
+                        'assets/images/concert-tickets_svgrepo.com-.png')
+                    : Image.asset(
+                        'assets/images/concert-tickets_svgrepo.com.png'),
                 label: 'My Events',
               ),
               BottomNavigationBarItem(

@@ -1,6 +1,5 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ticketapp/componets/TextFields/BaseText.dart';
 import 'package:ticketapp/componets/TextFields/TextFieldDecoration.dart';
 import 'package:ticketapp/model/datamodel.dart';
@@ -14,7 +13,6 @@ class AddShow extends StatefulWidget {
 }
 
 class _AddShowState extends State<AddShow> {
-  late TextEditingController _artistController;
   late TextEditingController _showName;
   late TextEditingController _showLocation;
   late TextEditingController _entryGate;
@@ -28,7 +26,6 @@ class _AddShowState extends State<AddShow> {
   void initState() {
     super.initState();
     _loadArtists();
-    _artistController = TextEditingController();
     _showName = TextEditingController();
     _showLocation = TextEditingController();
     _entryGate = TextEditingController();
@@ -49,8 +46,18 @@ class _AddShowState extends State<AddShow> {
 
   @override
   void dispose() {
-    _artistController.dispose();
+    _showName.dispose();
+    _showLocation.dispose();
+    _entryGate.dispose();
+    _orderID.dispose();
+    _mapURL.dispose();
+    _ticketType.dispose();
     super.dispose();
+  }
+
+  // Get the weekday as a string (e.g., 'Mon', 'Tue')
+  String _getWeekdayString(DateTime date) {
+    return DateFormat('EEE').format(date);
   }
 
   @override
@@ -67,6 +74,7 @@ class _AddShowState extends State<AddShow> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Dropdown to select artist
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: DropdownButtonFormField<Artist>(
@@ -88,25 +96,26 @@ class _AddShowState extends State<AddShow> {
                 ),
               ),
             ),
+            // Date and time pickers
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                keyboardType: TextInputType.datetime,
                 controller: TextEditingController(
-                  text: _selectedDate.month.toString().padLeft(2, '0'),
+                  text:
+                      "${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}",
                 ),
                 decoration: inputDecoration(
                   context,
-                  hintText: 'Month',
+                  hintText: 'Select date',
                   suffixIcon: Image.asset('assets/images/Calendar.png'),
                 ),
+                readOnly: true,
                 onTap: () async {
                   final DateTime? pickedDate = await showDatePicker(
                     context: context,
                     initialDate: _selectedDate,
                     firstDate: DateTime(2000),
                     lastDate: DateTime(2101),
-                    initialDatePickerMode: DatePickerMode.day,
                   );
                   if (pickedDate != null && pickedDate != _selectedDate) {
                     setState(() {
@@ -119,29 +128,15 @@ class _AddShowState extends State<AddShow> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                keyboardType: TextInputType.datetime,
                 controller: TextEditingController(
-                  text: _selectedDate.day.toString().padLeft(2, '0'),
+                  text: _getWeekdayString(_selectedDate),
                 ),
                 decoration: inputDecoration(
                   context,
-                  hintText: 'day',
+                  hintText: 'Weekday',
                   suffixIcon: Image.asset('assets/images/Calendar.png'),
                 ),
-                onTap: () async {
-                  final DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: _selectedDate,
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2101),
-                    initialDatePickerMode: DatePickerMode.day,
-                  );
-                  if (pickedDate != null && pickedDate != _selectedDate) {
-                    setState(() {
-                      _selectedDate = pickedDate;
-                    });
-                  }
-                },
+                readOnly: true,
               ),
             ),
             Padding(
@@ -152,9 +147,10 @@ class _AddShowState extends State<AddShow> {
                 ),
                 decoration: inputDecoration(
                   context,
-                  hintText: 'Time',
+                  hintText: 'Select time',
                   suffixIcon: Image.asset('assets/images/Clock.png'),
                 ),
+                readOnly: true,
                 onTap: () async {
                   final TimeOfDay? pickedTime = await showTimePicker(
                     context: context,
@@ -168,6 +164,7 @@ class _AddShowState extends State<AddShow> {
                 },
               ),
             ),
+            // Text fields for show details
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CustomTextField(
@@ -216,6 +213,7 @@ class _AddShowState extends State<AddShow> {
                 keyboardType: TextInputType.text,
               ),
             ),
+            // Button to add show
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
@@ -241,7 +239,11 @@ class _AddShowState extends State<AddShow> {
     final String showName = _showName.text;
     final String month = _selectedDate.month.toString().padLeft(2, '0');
     final String day = _selectedDate.day.toString().padLeft(2, '0');
+    final String weekday = _getWeekdayString(_selectedDate);
     final String time = _selectedTime.format(context);
+    print(weekday);
+    print(weekday);
+    print('weekday');
 
     if (showName.isNotEmpty && _selectedArtist != null) {
       final Show show = Show(
@@ -249,6 +251,7 @@ class _AddShowState extends State<AddShow> {
         artistId: _selectedArtist!.id,
         month: month,
         day: int.parse(day),
+        weekday: weekday, // Add the weekday to the Show object
         time: time,
         location: _showLocation.text,
         fee: _entryGate.text,

@@ -132,10 +132,7 @@ class _TransfarToState extends State<TransfarTo> {
                 // ),
               ),
               padding: const EdgeInsets.all(8.0),
-              child: const Icon(
-                Icons.share,
-                color: Color(0xffDEDEDE),
-              ),
+              child: Image.asset('assets/images/Vector (1).png'),
             ),
             const SizedBox(
               height: 38,
