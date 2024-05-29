@@ -212,7 +212,7 @@ class _ArtistListState extends State<ArtistList> {
                               _addArtist();
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: const Color(0xFF127CF7),
+                              backgroundColor: const Color(0xFF127CF7),
                             ),
                             child: const Text(
                               "Add Artist",

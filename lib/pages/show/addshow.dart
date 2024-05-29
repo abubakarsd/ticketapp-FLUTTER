@@ -219,7 +219,7 @@ class _AddShowState extends State<AddShow> {
               child: ElevatedButton(
                 onPressed: _addShow,
                 style: ElevatedButton.styleFrom(
-                  primary: const Color(0xFF127CF7),
+                  backgroundColor: const Color(0xFF127CF7),
                 ),
                 child: const Text(
                   "Add Show",

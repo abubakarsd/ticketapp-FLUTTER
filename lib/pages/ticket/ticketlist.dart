@@ -4,7 +4,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:ticketapp/componets/TextFields/BaseText.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:ticketapp/componets/cards/actioncard.dart';
 import 'package:ticketapp/model/datamodel.dart';
 import 'package:ticketapp/services/database_helper.dart';
@@ -271,7 +270,7 @@ class _TicketListState extends State<TicketList> {
                               _addTicket();
                             },
                             style: ElevatedButton.styleFrom(
-                              primary: const Color(0xFF127CF7),
+                              backgroundColor: const Color(0xFF127CF7),
                             ),
                             child: const Text(
                               "Add Ticket",
