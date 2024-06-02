@@ -458,7 +458,14 @@ class _TicketListForShowState extends State<TicketListForShow> {
             },
           ),
           const SizedBox(
-            height: 20,
+            height: 10,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/images/newgut.png'),
+          ),
+          const SizedBox(
+            height: 10,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

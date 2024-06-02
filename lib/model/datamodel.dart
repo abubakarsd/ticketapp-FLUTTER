@@ -102,7 +102,7 @@ class Ticket {
   final int? showId;
   final String selection;
   final String row;
-  final int seat;
+  final String seat;
 
   Ticket({
     this.id,
