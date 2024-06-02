@@ -478,7 +478,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
                             color: Color(0xFFEAEAEA),
                           ),
                           child: const Center(
-                            child: Text('Transfar',
+                            child: Text('Transfer',
                                 style: TextStyle(
                                   color: Color(0xFFFFFFFF),
                                   fontSize: 15,
@@ -494,7 +494,7 @@ class _TicketListForShowState extends State<TicketListForShow> {
                             color: Color(0xff0163D5),
                           ),
                           child: const Center(
-                            child: Text('Transfar',
+                            child: Text('Transfer',
                                 style: TextStyle(
                                   color: Color(0xFFFFFFFF),
                                   fontSize: 15,
