@@ -6,7 +6,7 @@ class BlankSearchContainer extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Color.fromARGB(158, 249, 247, 247), // Background color
+        color: const Color.fromARGB(158, 249, 247, 247), // Background color
         borderRadius: BorderRadius.circular(0),
       ),
       child: Container(

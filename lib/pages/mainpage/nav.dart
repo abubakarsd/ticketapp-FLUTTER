@@ -7,6 +7,7 @@ class Nav extends StatefulWidget {
   const Nav({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _NavState createState() => _NavState();
 }
 
@@ -31,6 +32,7 @@ class _NavState extends State<Nav> {
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
 
+    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -47,7 +49,7 @@ class _NavState extends State<Nav> {
             currentIndex: _selectedIndex,
             onTap: _onItemTap,
             selectedItemColor: const Color(0xFF127CF7),
-            unselectedItemColor: Colors.black,
+            unselectedItemColor: Color.fromARGB(255, 122, 122, 122),
             type: BottomNavigationBarType.fixed,
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
